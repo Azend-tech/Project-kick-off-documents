@@ -2,6 +2,8 @@
 
 This document compares the platforms available for running your application in different environments (dev, stage, prod), with pros and cons to help you choose what fits your needs.
 
+**Note**: Your tier determines which deployment options make sense. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific recommendations.
+
 ## Popular Platforms
 
 You have several choices:
@@ -10,6 +12,13 @@ You have several choices:
 - **AWS**: Fargate for container management without managing servers. EKS for Kubernetes on AWS. Lambda for serverless functions.
 - **VMs**: Infrastructure as a Service (IaaS) with tools like Terraform and Ansible for configuration management.
 - **Local development**: Docker Compose for simple local dev environments.
+
+## Choosing by Tier
+
+- **POC**: Docker Compose locally, maybe a free tier cloud service
+- **MVP**: Single region (App Service/ECS Fargate), basic managed database
+- **Full Build**: Multi-zone within single region, managed services with failover
+- **Enterprise**: Multi-region, advanced load balancing, disaster recovery
 
 ## How to Choose
 

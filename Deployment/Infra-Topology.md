@@ -2,6 +2,8 @@
 
 This document describes your deployment topology, showing how components are distributed across environments (dev, stage, prod) and how they communicate through network boundaries.
 
+**Note**: Complexity and scale depend on your project tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific infrastructure guidance.
+
 ## What to Include in Your Diagrams
 
 Draw a C4 Deployment diagram for each environment. Show the gateway/ingress, application nodes, data stores, messaging systems, and observability stack. Mark trust boundaries clearly: which parts are public-facing, which are private, and what's restricted to the management plane.
@@ -33,6 +35,12 @@ C4Container
 **Egress**: Restrict outbound traffic from services. Use NAT gateways or egress rules to control what services can reach externally, and maintain allowlists for third-party APIs.
 
 **DNS**: Use managed DNS zones. If needed, implement split-horizon DNS for different internal and external views.
+
+**Tier-Specific Notes:**
+- **POC**: Single server, no load balancing needed
+- **MVP**: Single load balancer, basic ingress
+- **Full Build**: Load balancer with health checks, separate management network
+- **Enterprise**: Advanced load balancing, DDoS protection, multi-region failover
 
 ## Observability Shared Services
 

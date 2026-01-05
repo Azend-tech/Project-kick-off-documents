@@ -2,6 +2,8 @@
 
 This document captures your database choices, data modeling approach, and resilience strategy.
 
+**Note**: Database complexity and redundancy depend on your tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## Choosing the Right Database
 
 Different parts of your system may have different database needs. A relational database like Postgres handles transactional workloads well. NoSQL databases like Cosmos DB or DynamoDB excel when you need high-scale key-value or document storage. Redis provides fast caching. For analytics, a columnar database or data warehouse is better suited.

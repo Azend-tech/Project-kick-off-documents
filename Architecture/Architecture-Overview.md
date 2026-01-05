@@ -2,6 +2,8 @@
 
 This document captures the system mission, constraints, design principles, and overall structure using C4 Context and Container diagrams.
 
+**Note**: Adapt this architecture to your project tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific infrastructure and process guidance.
+
 ## The System: {{ProjectName}}
 
 Our example is a multi-tenant commerce platform that handles catalog browsing, shopping carts, checkout flows, payment processing, and order tracking. The system serves both web customers and external applications through public APIs. We operate across US and EU regions with tenant-aware data handling, ensuring each tenant's data stays isolated and meets regional compliance requirements. Every request, token, and database record includes a `tenantId` for strict isolation.
@@ -45,6 +47,12 @@ Cross-tenant access is strictly forbidden. The gateway and every service must en
 ## Quality Attributes and SLOs
 
 We target 99.9% availability on a monthly basis. Latency for core APIs (read and write) should stay within p95 ≤ 300ms and p99 ≤ 800ms, with authentication requests even faster at p95 ≤ 150ms. The system should sustain 500–1,000 requests per second before gracefully degrading with backpressure. Our monthly error budget is 0.1%, meaning we can afford roughly 43 minutes of downtime per month. We aim to recover from incidents within 30–60 minutes (RTO) and should lose no more than 15 minutes of data in a disaster (RPO).
+
+**Tier Adjustments:**
+- **POC**: No SLOs needed; best effort only
+- **MVP**: 99.0% availability, p95 ≤ 500ms, <1% error rate
+- **Full Build**: 99.5% availability, p95 ≤ 300ms, <0.5% error rate
+- **Enterprise**: 99.9% availability, p95 ≤ 200ms, <0.1% error rate, formal RTO/RPO
 
 ## C4 diagrams (Mermaid)
 Context:
