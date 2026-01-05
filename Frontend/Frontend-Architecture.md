@@ -2,9 +2,17 @@
 
 This document defines how you organize the frontend application, performance targets, and how it integrates with backend services.
 
+**Note**: Frontend complexity grows with your tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance on features and tooling.
+
 ## Application Structure
 
 We recommend an app shell architecture with feature modules for each domain: Catalog, Cart, Checkout, Orders, and Admin. Load code per route and per role so a buyer never downloads code for admin features. For state management, use React Query to cache server state, local state for UI interactions, and Redux only if you truly need shared state across many parts of the app. Use authenticated/unauthenticated route guards and show proper 404 and 500 pages. Keep routes tenant-aware.
+
+**Tier-Specific Frontend:**
+- **POC**: Single-page simple form, minimal routing
+- **MVP**: Core features (Catalog, Cart, Checkout), basic module separation
+- **Full Build**: Full feature set with code splitting per route, admin module, performance optimization
+- **Enterprise**: Sophisticated state management, A/B testing, advanced performance monitoring, accessibility compliance
 
 ## Talking to the Backend
 
@@ -13,6 +21,12 @@ Generate TypeScript clients from your OpenAPI specs so you get type safety. Use 
 ## Performance Budgets
 
 Set a target of 200 KB gzipped per primary route. Aim for Time to Interactive within 2.5 seconds on a mid-tier mobile device. Keep Cumulative Layout Shift within Core Web Vitals thresholds. Lazy load images, compress them, and serve them through a CDN.
+
+**Tier-Specific Performance:**
+- **POC**: No performance targets; best effort
+- **MVP**: Bundle ≤ 300 KB gzipped, TTI ≤ 3 seconds
+- **Full Build**: Bundle ≤ 200 KB gzipped, TTI ≤ 2.5 seconds, Core Web Vitals passing
+- **Enterprise**: Bundle ≤ 150 KB gzipped, TTI ≤ 2 seconds, comprehensive RUM monitoring
 
 ## Accessibility and User Experience
 

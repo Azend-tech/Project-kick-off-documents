@@ -2,6 +2,8 @@
 
 The API gateway is your system's front door. It standardizes how requests are validated, transformed, and routed to backend services, and it's where we enforce consistent policies like authentication, rate limiting, and versioning.
 
+**Note**: Gateway complexity scales with your tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## Core Responsibilities
 
 The gateway validates JWT tokens and checks that the audience and scopes match the requested operation. It applies rate limiting (100 requests per minute by default, but higher for internal clients). It normalizes headers, adding `tenantId` and correlation IDs as needed. Error responses are mapped to the RFC 7807 JSON problem format for consistency. APIs are versioned at the path level (e.g., `/v1`), with deprecation and sunset headers when retiring old versions.

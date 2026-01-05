@@ -2,6 +2,8 @@
 
 This document standardizes how code gets built, tested, and deployed safely.
 
+**Note**: CI/CD complexity scales with your project tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## Pipeline Stages
 
 A typical pipeline looks like this: **build** → **test** → **security scan** → **package** → **deploy to dev** → **end-to-end tests** → **deploy to stage** → **performance tests** → **deploy to prod**.
@@ -11,6 +13,12 @@ Each stage gates the next one, so a problem is caught early before it reaches pr
 ## Quality Gates
 
 Code must pass linting and unit tests before moving forward. Aim for at least 80% test coverage. Static and dynamic security scans block the pipeline if they find high or critical issues. For infrastructure changes in production, require manual review or policy engine approval before applying.
+
+**Tier-Specific Testing:**
+- **POC**: No automated tests; optional manual testing
+- **MVP**: Unit tests on critical paths, 60%+ coverage target, basic lint checks
+- **Full Build**: Comprehensive unit + integration tests, 80%+ coverage, security scanning in pipeline
+- **Enterprise**: 90%+ coverage, SAST/DAST/SCA, formal security approval, chaos engineering tests
 
 ## Deploying Safely
 

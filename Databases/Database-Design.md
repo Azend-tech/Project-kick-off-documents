@@ -29,6 +29,12 @@ Migrations live in version control and are forward-only—never write a migratio
 
 Back up your databases every day with full backups, plus point-in-time recovery capability. Test restores every quarter to make sure they actually work—don't discover on disaster day that your backups are corrupted. Set up read replicas so you can scale reads without hitting the primary. Test failover regularly.
 
+**Tier-Specific Approach:**
+- **POC**: No backups or replication; data loss is acceptable
+- **MVP**: Daily backups, optional read replica, manual restore testing
+- **Full Build**: Daily + PITR backups, read replicas, automated failover testing
+- **Enterprise**: Continuous replication, multi-region backups, automated failover, disaster recovery drills
+
 ## Keeping Data Safe
 
 Encrypt data both in transit (TLS) and at rest (KMS-managed keys). Create database users with the least privilege needed for their role. Rotate credentials regularly.

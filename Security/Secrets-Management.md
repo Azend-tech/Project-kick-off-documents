@@ -2,6 +2,8 @@
 
 This document standardizes how secrets are stored, accessed, and rotated throughout the system.
 
+**Note**: Secret management complexity increases with your tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## The Rules
 
 Never store secrets in git. Always use a vault or key management service like Azure Key Vault, AWS Secrets Manager, or similar. Rotate secrets at least every 90 days, or immediately when someone leaves the team. Use managed identities or service principals instead of long-lived API keys and passwords. For local development, use `.env.local` files that are gitignored, and never commit actual credentials.

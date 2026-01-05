@@ -2,6 +2,8 @@
 
 This document outlines how we handle identity, access control, data protection, and security assurance across the system.
 
+**Note**: Security rigor scales with your project tier and data sensitivity. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## Who Gets Access?
 
 We use OpenID Connect (OIDC) and OAuth 2.0 for authentication. Tokens are JWT tokens signed with RS256. Access tokens expire after 15 minutes; refresh tokens last 24 hours. Client applications on the web use the PKCE flow to secure the authorization code, preventing token theft.
@@ -33,6 +35,12 @@ Create a centralized audit log for admin actions and security-sensitive operatio
 ## Testing and Security Gates
 
 Run static application security testing (SAST) and dynamic security testing (DAST) as part of continuous integration. Scan dependencies and container images for known vulnerabilities. Conduct threat modeling for major features and review new integrations with external systems or data stores.
+
+**Tier-Specific Security:**
+- **POC**: Security is optional; focus on speed
+- **MVP**: Basic SAST, dependency scanning, manual security review pre-launch
+- **Full Build**: SAST/DAST in pipeline, threat modeling, penetration testing before major releases
+- **Enterprise**: Continuous security scanning, formal security audits, compliance certifications, incident response plan
 
 ## Diagrams
 - AuthN/AuthZ flow (Mermaid):

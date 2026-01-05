@@ -2,9 +2,17 @@
 
 This document defines service boundaries, module organization, and the runtime concerns you need to think about when building the backend.
 
+**Note**: Backend structure evolves across tiers from simple monolith (POC) to distributed microservices (Enterprise). See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## Starting Point: Modular Monolith
 
 We recommend starting with a modular monolith unless you have a clear need to distribute services across different processes or machines. Only extract a service into its own deployment when you have stable contracts between modules and clear business reasons—such as independent scaling, team ownership, or isolation requirements.
+
+**Tier-Specific Architecture:**
+- **POC**: Single simple application, no modules
+- **MVP**: Modular monolith with clear boundaries (Orders, Payments, Catalog)
+- **Full Build**: Modular monolith with some extracted services for scale (Payments, Notifications)
+- **Enterprise**: Microservices by domain with async communication, API contracts, independent deployments
 
 ## Module Structure
 

@@ -2,6 +2,8 @@
 
 This document shows how the system interacts with external and internal services, including C4 Container views and sequence diagrams for key workflows.
 
+**Note**: Integration complexity scales with your tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## API Contracts and Versioning
 
 All APIs use REST with OpenAPI specifications. We use path-based versioning starting with `/v1`, and we're committed to backward compatibility before making any breaking changes. Event schemas are versioned with a schema registry, and we prefer additive changes that won't break existing consumers.

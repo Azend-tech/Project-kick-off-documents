@@ -2,6 +2,8 @@
 
 This document defines how we classify data, how long we keep it, and who can access it.
 
+**Note**: Data governance rigor scales with your tier and data sensitivity. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific guidance.
+
 ## Data Classification
 
 **PII (Personally Identifiable Information)**: Names, email addresses, phone numbers, and sensitive tokens that directly identify a person.

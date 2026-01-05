@@ -7,7 +7,7 @@ This document defines the four stages of software development and how architectu
 **Goal**: Validate the idea quickly with minimal investment. Build something that demonstrates core functionality.
 
 **Timeline**: 2-4 weeks  
-**Team**: 1-2 developers  
+**Team**: 1-2 developers (no QA needed)  
 **Budget**: Minimal  
 
 ### Infrastructure
@@ -39,8 +39,8 @@ This document defines the four stages of software development and how architectu
 
 **Goal**: Launch to real users with core features working reliably. The product should stay running and handle expected traffic.
 
-**Timeline**: 8-12 weeks  
-**Team**: 2-4 developers  
+**Timeline**: 10-16 weeks  
+**Team**: 2-3 developers + 1 QA engineer  
 **Budget**: Moderate ($1,000-5,000/month)  
 
 ### Infrastructure
@@ -77,8 +77,8 @@ This document defines the four stages of software development and how architectu
 
 **Goal**: A production-grade system that scales, performs well, and operates reliably. Support growing user bases and transaction volumes.
 
-**Timeline**: 3-6 months  
-**Team**: 5-10 developers (frontend, backend, DevOps)  
+**Timeline**: 4-8 months  
+**Team**: 6-8 developers (frontend/backend) + 2-3 QA engineers + 1-2 DevOps engineers  
 **Budget**: Significant ($5,000-20,000/month)  
 
 ### Infrastructure
@@ -117,7 +117,7 @@ This document defines the four stages of software development and how architectu
 **Goal**: Mission-critical system with high availability, security, compliance, and operational maturity. Support large organizations and regulatory requirements.
 
 **Timeline**: 6+ months  
-**Team**: 15+ developers, DevOps, security, product  
+**Team**: 12-15 developers (frontend, backend) + 3-5 QA engineers + 2-3 DevOps/SRE engineers + 1-2 security specialists  
 **Budget**: Enterprise-level ($20,000+/month)  
 
 ### Infrastructure

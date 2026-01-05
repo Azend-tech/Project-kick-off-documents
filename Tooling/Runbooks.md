@@ -2,6 +2,8 @@
 
 This document gives engineers quick, repeatable steps to set up, operate, and troubleshoot the system. It's essential for onboarding new developers and helping everyone respond to incidents consistently.
 
+**Note**: Operational runbooks should be customized for your project tier. See [Project-Tiers.md](../Project-Tiers.md) for tier-specific operational guidance.
+
 ## Getting Your Local Environment Set Up
 
 Before you start, make sure you have:
