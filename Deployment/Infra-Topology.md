@@ -13,10 +13,8 @@ Example (Mermaid):
 ```mermaid
 C4Deployment
 	title [ProjectName] Prod Deployment
-	Deployment_Node(cdn, "CDN/Edge") {
-	}
-	Deployment_Node(lb, "Gateway/Ingress") {
-	}
+	Deployment_Node(cdn, "CDN/Edge")
+	Deployment_Node(lb, "Gateway/Ingress")
 	Deployment_Node(app, "App Nodes", "AKS/ECS") {
 		Container(api, "API Pods", "Node/.NET")
 		Container(front, "Frontend", "React static")
