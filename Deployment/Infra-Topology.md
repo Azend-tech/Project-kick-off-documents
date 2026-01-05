@@ -9,24 +9,29 @@ Draw a C4 Deployment diagram for each environment. Show the gateway/ingress, app
 Example (Mermaid):
 ```mermaid
 C4Deployment
-	Deployment_Node(cdn, "CDN/Edge") {
-	}
-	Deployment_Node(lb, "Gateway/Ingress") {
-	}
-	Deployment_Node(app, "App Nodes", "AKS/ECS") {
-		Container(api, "API Pods", "Node/.NET")
-		Container(front, "Frontend", "React static")
-	}
-	Deployment_Node(data, "Data Layer") {
-		ContainerDb(db, "Postgres", "Primary + Replica")
-		ContainerDb(cache, "Redis", "Cache")
-		Container(queue, "Kafka/Service Bus", "Events")
-	}
-	Rel(cdn, lb, "HTTPS")
-	Rel(lb, app, "HTTPS")
-	Rel(api, db, "SQL/TLS")
-	Rel(api, cache, "TLS")
-	Rel(api, queue, "TLS")
+    Deployment_Node(cdn, "CDN / Edge", "Cloud CDN") {
+    }
+
+    Deployment_Node(lb, "Gateway / Ingress", "NGINX / App Gateway") {
+    }
+
+    Deployment_Node(app, "App Nodes", "AKS / ECS") {
+        Container(api, "API Pods", ".NET", "Backend REST APIs")
+        Container(front, "Frontend", "React", "Static web application")
+    }
+
+    Deployment_Node(data, "Data Layer", "Managed Services") {
+        ContainerDb(db, "PostgreSQL", "Postgres", "Primary + Read Replica")
+        ContainerDb(cache, "Redis", "Redis", "Distributed cache")
+        Container(queue, "Event Bus", "Kafka / Service Bus", "Asynchronous messaging")
+    }
+
+    Rel(cdn, lb, "HTTPS")
+    Rel(lb, app, "HTTPS")
+    Rel(api, db, "SQL over TLS")
+    Rel(api, cache, "TLS")
+    Rel(api, queue, "TLS")
+
 ```
 
 ## Network Design
