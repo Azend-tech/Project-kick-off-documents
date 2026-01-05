@@ -11,7 +11,7 @@ Abbreviations: CDN (Content Delivery Network), AZ (Availability Zone), NAT (Netw
 
 Example (Mermaid):
 ```mermaid
-C4Deployment {
+C4Deployment
 	title [ProjectName] Prod Deployment
 	Deployment_Node(cdn, "CDN/Edge") {
 	}
@@ -31,7 +31,6 @@ C4Deployment {
 	Rel(api, db, "SQL/TLS")
 	Rel(api, cache, "TLS")
 	Rel(api, queue, "TLS")
-}
 ```
 
 ## Network
