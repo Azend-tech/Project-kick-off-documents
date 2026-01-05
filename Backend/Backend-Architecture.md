@@ -1,30 +1,37 @@
 # Backend Architecture
 
-Purpose: Define service boundaries, module layout, and runtime concerns.
+This document defines service boundaries, module organization, and the runtime concerns you need to think about when building the backend.
 
-## Deployment style
-- Start with modular monolith unless clear distribution needs.
-- Path to microservices by domain (e.g., Orders, Payments, Catalog) with stable contracts.
+## Starting Point: Modular Monolith
 
-Abbreviations: SLA (Service Level Agreement), SLO (Service Level Objective), RPS (Requests per second).
+We recommend starting with a modular monolith unless you have a clear need to distribute services across different processes or machines. Only extract a service into its own deployment when you have stable contracts between modules and clear business reasons—such as independent scaling, team ownership, or isolation requirements.
 
-## Module boundaries ([ProjectName] example)
-- Orders: create/update/cancel, status transitions, emits OrderCreated/OrderPaid/OrderShipped.
-- Payments: authorize/capture/refund with provider abstraction, idempotent operations.
-- Catalog: products, pricing, availability; cache product details.
-- Notifications: email/SMS/webhook fanout; retries with DLQ.
-- Rules: no cross-module DB access; communicate via domain events or service APIs.
+## Module Structure
 
-## Runtime concerns
-- Validation at edges; input/output schemas versioned.
-- Caching: Redis for read-heavy paths; cache busting on writes.
-- Idempotency for POST/PUT of critical resources (orders, payments).
-- Concurrency: optimistic locking on balances/orders; enforce invariants in DB.
-- Backpressure: queue size alerts; shed load gracefully.
+For our example commerce system, we organize the backend around these core domains:
 
-## Observability
-- Tracing with OpenTelemetry; propagate trace IDs across services.
-- Structured logging; metrics per endpoint (latency, error rate, RPS) and per event handler.
+- **Orders**: Creates, updates, and cancels orders. Manages status transitions. Publishes domain events (OrderCreated, OrderPaid, OrderShipped).
+- **Payments**: Handles authorization, capture, and refunds with support for multiple payment providers. Operations are idempotent.
+- **Catalog**: Manages products (SKUs), pricing, and availability. Data is cached heavily.
+- **Notifications**: Fan-out email, SMS, and webhook notifications with retry logic and a dead-letter queue for failures.
+
+All modules follow a key rule: no cross-module database access. Instead, modules communicate via domain events or synchronous service calls through well-defined APIs.
+
+## What We Care About at Runtime
+
+**Validation**: Validate input at the API boundary and output before returning responses. Version your schemas.
+
+**Caching**: Redis handles read-heavy paths. When data changes, invalidate caches explicitly.
+
+**Idempotency**: Critical operations like creating orders and processing payments must be idempotent. If the same request arrives twice, the result should be identical, not a duplicate charge.
+
+**Concurrency**: Use optimistic locking when updating shared state (like balances or inventory). Let the database enforce invariants.
+
+**Backpressure**: Monitor queue sizes and shed load gracefully when the system gets overwhelmed.
+
+## Seeing What's Happening
+
+Observability is not optional. Use OpenTelemetry to emit traces, and propagate trace IDs across service boundaries so you can follow a single request through the system. Log everything to a central place with structured output. Record metrics for every endpoint: latency, error rate, and requests per second. Do the same for event handlers.
 ## Diagrams
 - Logical modules (Mermaid):
 ```mermaid
@@ -67,9 +74,9 @@ sequenceDiagram
     ORD-->>GW: 201 orderId
     GW-->>Client: 201 orderId
 ```
-## Evolution to services
-- Extract when: clear domain ownership, stable API, scaling/isolation need.
-- Keep contract tests between gateway and services; consumer-driven contracts for events.
+## Growing to Microservices
+
+As the system matures, you might extract a module into its own service. Wait until you have clear ownership (one team per service), a stable API contract, and a good reason to scale or isolate it. Always maintain contract tests between the gateway and services, and use consumer-driven contracts for event-based communication.
 
 ## Project-Specific Overrides
 - Runtimes: Node.js and .NET for APIs; keep module boundaries consistent across runtimes.

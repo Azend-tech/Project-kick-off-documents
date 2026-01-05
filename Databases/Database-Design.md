@@ -1,39 +1,35 @@
 # Database Design
 
-Purpose: Capture data store choices, modeling, and resilience.
+This document captures your database choices, data modeling approach, and resilience strategy.
 
-Abbreviations: OLTP (Online Transaction Processing), PITR (Point-in-Time Recovery), PK (Primary Key), FK (Foreign Key).
+## Choosing the Right Database
 
-## Engines and roles (example)
-- OLTP: Postgres/SQL Server.
-- NoSQL: Cosmos DB/Dynamo for high-scale key-value or document needs.
-- Caching: Redis for hot paths.
-- Analytics: columnar or lakehouse downstream.
+Different parts of your system may have different database needs. A relational database like Postgres handles transactional workloads well. NoSQL databases like Cosmos DB or DynamoDB excel when you need high-scale key-value or document storage. Redis provides fast caching. For analytics, a columnar database or data warehouse is better suited.
 
-## Modeling
-- Normalize for consistency; denormalize for read-heavy paths as needed.
-- Partitioning/sharding: choose high-cardinality keys (e.g., tenantId, userId, orderId+time).
-- Soft deletes vs hard deletes: define policy; track audit fields.
+## Data Modeling
 
-## Example ([ProjectName])
-- Orders table: PK (order_id), partition key (tenant_id, order_month), status, total, currency.
-- Payments table: PK (payment_id), FK order_id, provider_status, tokenized method.
-- Catalog: product table with SKU, price, stock; price history table for audits.
-- Events outbox: stores domain events for reliable publish.
+Normalize tables to avoid anomalies and keep storage compact. However, denormalize specific read paths if performance becomes an issue—just be prepared to manage cache invalidation or use materialized views. When choosing partition or shard keys, pick high-cardinality values like `tenantId`, `userId`, or `orderId` combined with a timestamp. Avoid keys with low cardinality like `status` or `country`, which create hot partitions.
 
-## Migrations
-- Versioned migrations in repo; forward-only; blue/green safe changes first.
-- Rollout order: deploy code that tolerates new schema → migrate → flip features.
-- Use migration tags by environment and schema drift checks.
+## The Commerce Example
 
-## Resilience
-- Backups: daily full + PITR; test restores quarterly.
-- Replication: read replicas for reads; failover tested.
-- RPO/RTO alignment: 15m/30–60m defaults.
+For our example system:
 
-## Security
-- Encrypt at rest; TLS in transit.
-- Least-privilege DB roles; rotate credentials.
+- **Orders table**: Primary key is `order_id`, partitioned by `tenant_id` and month. Includes status, total amount, and currency.
+- **Payments table**: Primary key is `payment_id` with a foreign key to `order_id`. Stores the provider's transaction status and tokenized payment method (never raw card data).
+- **Catalog**: Products are stored with SKU, price, and stock levels. A separate price history table tracks pricing changes for auditing.
+- **Events outbox**: Stores domain events waiting to be published. This pattern ensures events are published even if the message broker is temporarily down.
+
+## Database Changes
+
+Migrations live in version control and are forward-only—never write a migration that destroys data without a good reason. The safest approach is to deploy new code that tolerates both the old and new schema, then run the migration, then flip the feature flag if needed. Use migration tags to track which environment each migration has run in, and implement schema drift detection to catch surprises.
+
+## High Availability and Disaster Recovery
+
+Back up your databases every day with full backups, plus point-in-time recovery capability. Test restores every quarter to make sure they actually work—don't discover on disaster day that your backups are corrupted. Set up read replicas so you can scale reads without hitting the primary. Test failover regularly.
+
+## Keeping Data Safe
+
+Encrypt data both in transit (TLS) and at rest (KMS-managed keys). Create database users with the least privilege needed for their role. Rotate credentials regularly.
 
 ## Diagrams
 - Logical data flow (Mermaid):

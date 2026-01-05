@@ -1,18 +1,15 @@
-# Infra Topology
+# Infrastructure Topology
 
-Purpose: Describe deployment topology with C4 Deployment diagrams and network zoning.
+This document describes your deployment topology, showing how components are distributed across environments (dev, stage, prod) and how they communicate through network boundaries.
 
-Abbreviations: CDN (Content Delivery Network), AZ (Availability Zone), NAT (Network Address Translation).
+## What to Include in Your Diagrams
 
-## Diagram guidance
-- C4 Deployment diagram per environment (dev/stage/prod).
-- Show: gateway/ingress, app/services, data stores, messaging, observability stack.
-- Include trust boundaries: public vs private subnets, management plane.
+Draw a C4 Deployment diagram for each environment. Show the gateway/ingress, application nodes, data stores, messaging systems, and observability stack. Mark trust boundaries clearly: which parts are public-facing, which are private, and what's restricted to the management plane.
 
 Example (Mermaid):
 ```mermaid
 C4Deployment
-	title [ProjectName] Prod Deployment
+	title {{ProjectName}} Prod Deployment
 	Deployment_Node(cdn, "CDN/Edge")
 	Deployment_Node(lb, "Gateway/Ingress")
 	Deployment_Node(app, "App Nodes", "AKS/ECS") {
@@ -31,22 +28,27 @@ C4Deployment
 	Rel(api, queue, "TLS")
 ```
 
-## Network
-- Ingress: managed gateway/ALB/NGINX ingress with TLS termination.
-- Egress: restrict outbound; use NAT/egress rules; allowlists for third-party APIs.
-- DNS: managed zones; split-horizon if needed.
+## Network Design
 
-## Observability shared services
-- Logging: centralized (e.g., ELK/Cloud-native logging).
-- Metrics: Prometheus/Cloud native.
-- Tracing: OpenTelemetry collector + backend (e.g., Jaeger/Zipkin/Application Insights/X-Ray).
+**Ingress**: Use a managed gateway or ALB with TLS termination. This is where HTTPS connections end and internal traffic begins.
 
-Expectation: every service exports metrics (latency/error rate/RPS), traces, and structured logs with correlation IDs.
+**Egress**: Restrict outbound traffic from services. Use NAT gateways or egress rules to control what services can reach externally, and maintain allowlists for third-party APIs.
 
-## Resilience
-- Zonal distribution where supported; multi-AZ/zone for prod tiers.
-- Backups: schedule + retention; test restores.
-- Chaos drills on non-prod before major releases.
+**DNS**: Use managed DNS zones. If needed, implement split-horizon DNS for different internal and external views.
+
+## Observability Shared Services
+
+**Logging**: Use a centralized logging platform (ELK stack, cloud-native logging) so you can search logs across all services.
+
+**Metrics**: Prometheus or your cloud provider's native metrics service to track CPU, memory, request latency, and error rates.
+
+**Tracing**: Deploy an OpenTelemetry collector that sends traces to a backend like Jaeger, Zipkin, Application Insights, or X-Ray.
+
+Every service should export metrics (latency, error rate, requests per second), traces, and structured logs with correlation IDs so you can trace a request end to end.
+
+## Making the System Resilient
+
+Distribute your workloads across availability zones when the cloud provider supports it. In production, run multiple instances across zones so a single zone failure doesn't take the system down. Back up your databases daily with full backups plus point-in-time recovery. Test restores quarterly so you know they actually work. Before major releases, run chaos engineering drills in non-production environments to find weak points.
 
 ## Project-Specific Overrides
 - Azure topology: API Management/Ingress → App Service or AKS → Postgres (Azure DB), MongoDB Atlas, Redis; Service Bus/Kafka for events; Key Vault for secrets.

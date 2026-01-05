@@ -1,41 +1,38 @@
 # Security Model
 
-Purpose: Define identity, authZ, data protection, and assurance controls.
+This document outlines how we handle identity, access control, data protection, and security assurance across the system.
 
-## Identity and access
-- IdP: OIDC/OAuth2; tokens JWT RS256; access 15m, refresh 24h; PKCE for public clients.
-- Scopes/roles: least privilege; service-to-service via client credentials.
-- MFA: required for admin and break-glass accounts; conditional access for privileged roles.
+## Who Gets Access?
 
-Abbreviations: IdP (Identity Provider), MFA (Multi-Factor Authentication), PKCE (Proof Key for Code Exchange).
+We use OpenID Connect (OIDC) and OAuth 2.0 for authentication. Tokens are JWT tokens signed with RS256. Access tokens expire after 15 minutes; refresh tokens last 24 hours. Client applications on the web use the PKCE flow to secure the authorization code, preventing token theft.
 
-## AuthZ patterns
-- API gateway enforces authentication and coarse scopes.
-- Services enforce fine-grained authZ (ABAC/RBAC) per domain.
-- Tenant isolation: tenantId in tokens and partition keys; verify on every request.
-- Sample claim mapping: `sub` userId, `tid` tenantId, `scope` list, `role` optional.
+For least-privilege access, we grant scopes per domain (e.g., `orders:read`, `payments:write`). Service-to-service communication uses client credentials flow. For sensitive operations, multi-factor authentication is required on admin and break-glass accounts, and we use conditional access policies to require extra verification for privileged roles.
 
-## Data protection
-- In transit: TLS 1.2+ with modern ciphers; HSTS on public endpoints.
-- At rest: KMS-managed keys; enable encryption for databases, queues, object storage.
-- PII handling: minimize, tokenize payment data; avoid logging secrets/PII; use data classification from Glossary/Data Governance.
+## Authorization
 
-Abbreviations: TLS (Transport Layer Security), KMS (Key Management Service), PII (Personally Identifiable Information).
+The API gateway enforces coarse-grained access control by checking scopes on the JWT. Services then enforce fine-grained authorization based on their domain rules (ABAC/RBAC).
 
-## Secrets and keys
-- Store in vault/KV; never commit. Rotate at least every 90 days.
-- Use managed identities/service principals for workloads; avoid static keys.
+Tenant isolation is critical. The `tenantId` appears in every JWT claim and must be verified on every request at both the gateway and service layers. A sample claim mapping looks like: `sub` (user ID), `tid` (tenant ID), `scope` (list of scopes), and `role` (optional).
 
-## Audit and logging
-- Centralized audit log for admin and security-sensitive actions.
-- Immutable or write-once retention for audit trails.
-- Correlate with trace IDs; retain per compliance needs.
+## Protecting Data
 
-## Testing and gating
-- SAST/DAST in CI; dependency scanning; container scanning.
-- Threat modeling per major feature; review external integrations and new data stores.
+**In transit**: TLS 1.2 or newer with modern cipher suites. HSTS headers on all public endpoints to prevent downgrade attacks.
 
-Abbreviations: SAST (Static Application Security Testing), DAST (Dynamic Application Security Testing).
+**At rest**: Encryption keys are managed by the cloud provider's KMS. Enable encryption for databases, queues, and object storage.
+
+**Handling PII**: Minimize collection and storage. Never log secrets or personally identifiable information. Tokenize payment card data. Refer to the Glossary and Data Governance documents for how to classify and handle sensitive data.
+
+## Secrets and Cryptographic Keys
+
+Store all secrets in a vault or key management system—never commit them to the repository. Rotate secrets at least every 90 days. For workloads running in the cloud, use managed identities or service principals instead of static API keys or credentials.
+
+## Audit Trail and Logging
+
+Create a centralized audit log for admin actions and security-sensitive operations. Make the audit trail immutable or write-once, with retention aligned to your compliance requirements. Correlate audit entries with trace IDs so you can connect the dots during investigations.
+
+## Testing and Security Gates
+
+Run static application security testing (SAST) and dynamic security testing (DAST) as part of continuous integration. Scan dependencies and container images for known vulnerabilities. Conduct threat modeling for major features and review new integrations with external systems or data stores.
 
 ## Diagrams
 - AuthN/AuthZ flow (Mermaid):

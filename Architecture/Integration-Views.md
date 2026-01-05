@@ -1,11 +1,12 @@
 # Integration Views
 
-Purpose: Show how the system interacts with external/internal services. Include C4 Container view excerpts and sequence diagrams for key flows.
+This document shows how the system interacts with external and internal services, including C4 Container views and sequence diagrams for key workflows.
 
-## APIs and contracts
-- REST/OpenAPI endpoints (versioned: /v1 first; backward compatible before breaking changes).
-- Event schemas: versioned payloads with schema registry; additive changes preferred.
-- Example (OpenAPI excerpt):
+## API Contracts and Versioning
+
+All APIs use REST with OpenAPI specifications. We use path-based versioning starting with `/v1`, and we're committed to backward compatibility before making any breaking changes. Event schemas are versioned with a schema registry, and we prefer additive changes that won't break existing consumers.
+
+Here's an example of what an API specification looks like:
 ```yaml
 /orders:
   get:
@@ -19,15 +20,13 @@ Purpose: Show how the system interacts with external/internal services. Include 
       "200": { description: OK }
 ```
 
-## Gateway posture
-- AuthN/Z: JWT (RS256), audience api://orders, scopes per domain (orders:read, orders:write).
-- Rate limiting: 100 req/min/user default; burst allowed with leaky bucket.
-- Transformations: header normalization (tenantId), error mapping to RFC 7807.
-- Versioning: path-based (/v1), deprecation headers with sunset dates.
+## Gateway Responsibilities
 
-Abbreviations: AuthN (authentication), AuthZ (authorization), RFC 7807 (problem+json error format).
+The API gateway handles authentication and authorization, ensuring every request has a valid JWT token with the right audience and scopes. We use rate limiting with a default of 100 requests per minute per user, but allow short bursts via a leaky bucket algorithm. The gateway normalizes headers (adding `tenantId` as needed) and maps error responses to the RFC 7807 JSON problem format. All APIs are versioned at the path level (e.g., `/v1`), and we include deprecation and sunset headers when phasing out old versions.
 
-## Sequence diagrams (key flows)
+## Key Workflows
+
+Below are the most important integration flows: checkout (synchronous request) and authentication (OIDC flow).
 Checkout (hypothetical):
 ```mermaid
 sequenceDiagram
@@ -56,14 +55,13 @@ sequenceDiagram
     IdP-->>Web: id_token + access_token (aud=api://orders)
 ```
 
-## Error, retry, and idempotency
-- Idempotency keys for POST (orders/payments).
-- Retries with backoff and jitter; max attempts tuned per dependency.
-- Circuit breakers for downstreams; fallbacks on read paths when possible.
+## Reliability Patterns
 
-## Testing expectations
-- Contract tests for gateway → API and for event schemas.
-- Load tests for hot endpoints (read and checkout) with tenant-aware data.
+To ensure reliability, we use idempotency keys on all POST requests that create resources like orders or payments. This prevents duplicate charges if a request is retried. We implement exponential backoff with jitter when calling external services, with maximum retry attempts tuned per dependency. Circuit breakers protect against cascading failures, and we implement fallbacks on read paths whenever possible.
+
+## Test Strategy
+
+We use contract tests to verify that the gateway correctly forwards requests to services and that event schemas remain compatible. Load tests focus on the hot paths (browsing and checkout) with realistic tenant-aware data to catch performance issues early.
 
 ## Project-Specific Overrides
 - Gateway: Azure API Management for Azure deployments; AWS API Gateway/ALB for AWS. JWT audience per cloud: api://orders (Azure) or arn-based (AWS) as needed.

@@ -1,27 +1,22 @@
 # API Gateway
 
-Purpose: Standardize edge policies and contract governance.
+The API gateway is your system's front door. It standardizes how requests are validated, transformed, and routed to backend services, and it's where we enforce consistent policies like authentication, rate limiting, and versioning.
 
-Abbreviations: AuthN (authentication), AuthZ (authorization), JWT (JSON Web Token), SLA (Service Level Agreement).
+## Core Responsibilities
 
-## Core policies
-- AuthN/Z: JWT validation, audience checks, scope enforcement.
-- Rate limiting: per user/client/IP; e.g., 100 req/min default; higher for internal calls.
-- Request/response transforms: header normalization (tenantId), error mapping to RFC 7807.
-- Versioning: path-based (/v1) with deprecation/sunset headers.
+The gateway validates JWT tokens and checks that the audience and scopes match the requested operation. It applies rate limiting (100 requests per minute by default, but higher for internal clients). It normalizes headers, adding `tenantId` and correlation IDs as needed. Error responses are mapped to the RFC 7807 JSON problem format for consistency. APIs are versioned at the path level (e.g., `/v1`), with deprecation and sunset headers when retiring old versions.
 
 ## Resilience
-- Timeouts tuned per upstream; retries with backoff for idempotent calls.
-- Circuit breakers; bulkheads per route/cluster.
-- Health checks and synthetic probes for key routes.
 
-## Monitoring
-- Per-route latency, error rate, saturation; alert on SLO breaches.
+Set timeouts per upstream service—there's no one-size-fits-all timeout value. Retry idempotent calls with exponential backoff. Circuit breakers prevent cascading failures when a service is down. Bulkheads isolate failures by route or cluster. Health checks and synthetic probes on critical routes let you know when something breaks.
 
-## Routing patterns
-- Canary routes for new versions; weighted or header-based.
-- Service discovery via registry or static configs.
-- Webhooks: dedicated route class with stricter auth and rate limits.
+## Staying Visible
+
+Monitor latency, error rate, and saturation for each route. Alert when service level objectives are breached so you can investigate and respond quickly.
+
+## Routing and Deployments
+
+Use canary routes to test new versions with a small subset of traffic before rolling out to everyone. Use header-based or weighted routing for fine-grained control. Service discovery can be static configs or a dynamic registry. Webhooks get a dedicated route class with stricter auth and rate limits since they often come from external systems.
 
 ## Diagrams
 - Request path (Mermaid):

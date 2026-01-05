@@ -1,10 +1,11 @@
-# Editor Config
+# Editor Configuration
 
-Purpose: Standardize IDE settings for consistency (VS Code, Visual Studio).
+This document standardizes IDE settings across the team so everyone's code looks consistent and follows the same rules.
 
-Abbreviations: IDE (Integrated Development Environment), EOL (End of Line).
+## Shared `.editorconfig` File
 
-## .editorconfig (example)
+Create an `.editorconfig` file in the root of your repository with settings like this:
+
 ```ini
 root = true
 [*]
@@ -21,9 +22,14 @@ indent_size = 2
 indent_size = 4
 ```
 
-## VS Code recommendations
-- Extensions: ESLint, Prettier (if used), EditorConfig, GitLens, commitlint support, YAML, Markdown lint.
-- Settings (workspace):
+This tells every editor (VS Code, Visual Studio, JetBrains IDEs, etc.) to use UTF-8 encoding, Unix line endings, and consistent indentation.
+
+## VS Code Setup
+
+Install these extensions: ESLint, Prettier (if your team uses it), EditorConfig, GitLens, commitlint support, YAML, and Markdown linters.
+
+Add these settings to your workspace config (`.vscode/settings.json`):
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -35,11 +41,11 @@ indent_size = 4
 }
 ```
 
-Rationale: consistent formatting reduces diff noise; EOL set to LF for cross-platform consistency; validation catches lint errors early.
+This automatically formats code when you save, enforces Unix line endings, and validates your code with ESLint as you type.
 
 ## Visual Studio
-- Enable .editorconfig respect.
-- Enforce code style in solution (.editorconfig or analyzer rules).
+
+Enable `.editorconfig` support in Tools > Options > Text Editor. Enforce code style rules with Roslyn analyzers (.NET) or editor config settings.
 
 ## Project-Specific Overrides
 - Formatters: Prettier for JS/TS/React; dotnet-format for C#; use ESLint for linting JS/TS.

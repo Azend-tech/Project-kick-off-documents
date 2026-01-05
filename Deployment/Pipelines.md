@@ -1,29 +1,28 @@
 # Pipelines (CI/CD)
 
-Purpose: Standardize build/test/deploy with safe rollouts.
+This document standardizes how code gets built, tested, and deployed safely.
 
-Abbreviations: CI/CD (Continuous Integration/Continuous Delivery), SAST (Static Application Security Testing), DAST (Dynamic Application Security Testing).
+## Pipeline Stages
 
-## Stages (example)
-- build → test → security-scan → package → deploy-dev → e2e → deploy-stage → perf → deploy-prod
+A typical pipeline looks like this: **build** → **test** → **security scan** → **package** → **deploy to dev** → **end-to-end tests** → **deploy to stage** → **performance tests** → **deploy to prod**.
 
-## Gates
-- Lint/unit tests must pass; coverage threshold target ≥ 80%.
-- SAST/DAST and dependency scans blocking for high/critical issues.
-- Infra plan review for prod (manual approval or policy checks).
+Each stage gates the next one, so a problem is caught early before it reaches production.
 
-## Rollouts
-- Blue/green: shift traffic after health verification.
-- Canary: progressive rollout by percentage or shard; auto-rollback on SLO errors.
+## Quality Gates
 
-## IaC integration
-- Terraform: plan in PR; apply on merge for non-prod; controlled apply for prod.
-- Azure-only option: Bicep templates with what-if validation.
-- Policy: format/validate/plan as part of PR checks.
+Code must pass linting and unit tests before moving forward. Aim for at least 80% test coverage. Static and dynamic security scans block the pipeline if they find high or critical issues. For infrastructure changes in production, require manual review or policy engine approval before applying.
 
-## Artifacts and signing
-- Store images in registry; sign images (e.g., cosign) and verify on deploy.
-- Tag images with git SHA and semantic version if applicable.
+## Deploying Safely
+
+Use blue-green deployments to shift traffic after health checks pass. Use canary deployments to roll out gradually by percentage or shard, with automatic rollback if error rates breach your SLOs.
+
+## Infrastructure as Code in Pipelines
+
+Terraform plans run during pull requests so everyone can review the changes. Non-production environments apply automatically on merge. Production applies only after manual approval. For Azure users, Bicep with `what-if` validation is an option. Format, validate, and plan checks run as part of PR checks.
+
+## Container Images and Artifacts
+
+Store container images in your registry (Azure Container Registry, AWS ECR, etc.). Sign images with tools like cosign and verify signatures during deployment. Tag images with the git commit SHA and semantic version if applicable, so you always know exactly what code is running.
 
 ## Example pipeline snippet (GitHub Actions-like)
 ```yaml

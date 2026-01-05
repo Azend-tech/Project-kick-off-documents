@@ -1,31 +1,39 @@
 # Git Workflow
 
-Defaults: trunk or short-lived branches, Conventional Commits, enforced by commitlint/githooks.
+This document standardizes how we branch, commit, and review code. We use trunk-based development with short-lived branches, Conventional Commits for consistency, and enforce both with git hooks and CI checks.
 
-Abbreviations: PR (Pull Request), CI (Continuous Integration), CD (Continuous Delivery), DRI (Directly Responsible Individual).
+## How We Branch
 
-## Branching
-- Main branch protected; feature branches short-lived.
-- Require PRs with reviews; enforce status checks.
-- Suggested naming: feature/TICKET-123, fix/TICKET-123, chore/TICKET-123.
+Keep the main branch protected. Developers work on short-lived feature branches. All changes go through pull requests with at least one review. Use consistent naming: `feature/TICKET-123`, `fix/TICKET-123`, `chore/TICKET-123`.
 
-## Commit format (Conventional Commits)
-- type(scope): subject where type ∈ feat, fix, docs, chore, refactor, test, ci.
-- Examples:
-  - feat(api): add order checkout endpoint
-  - fix(payments): handle capture timeout
+## Commit Messages
 
-## Enforcement
-- Pre-commit: lint/format; optional unit test subset.
-- Commit-msg hook: commitlint.
-- CI: run full lint/test; block on failure.
-- Recommended: signed commits for main; require approvals before merge.
+Use Conventional Commits: `type(scope): subject`, where type is one of:
+- `feat` for new features
+- `fix` for bug fixes  
+- `docs` for documentation changes
+- `chore` for maintenance and tooling
+- `refactor` for code restructuring
+- `test` for test additions or changes
+- `ci` for CI/CD updates
 
-## PR checklist (example)
-- [ ] Tests updated/added
-- [ ] Docs updated (if needed)
-- [ ] No secrets in diff
-- [ ] Linked issue/reference
+Examples:
+- `feat(api): add order checkout endpoint`
+- `fix(payments): handle capture timeout`
+
+This format makes it easy to scan commit history and auto-generate changelogs.
+
+## Making It Automatic
+
+Use git hooks to lint and format code before committing. Use commitlint in a commit-msg hook to enforce the Conventional Commits format. The CI pipeline runs the full test suite and lint checks; if anything fails, the PR is blocked. We recommend signing commits on the main branch for extra security.
+
+## Before Merging
+
+When submitting a pull request, make sure:
+- [ ] Tests are updated or added
+- [ ] Documentation is updated if needed
+- [ ] No secrets are in the diff
+- [ ] The issue is linked as a reference
 
 ## Example commitlint config (conceptual)
 ```json

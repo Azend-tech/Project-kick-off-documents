@@ -1,32 +1,26 @@
 # Frontend Architecture
 
-Purpose: Define app composition, performance, and integration patterns.
+This document defines how you organize the frontend application, performance targets, and how it integrates with backend services.
 
-## Structure ([ProjectName] example)
-- App shell + feature modules (Catalog, Cart, Checkout, Orders, Admin).
-- Code splitting per route and per role (buyer/admin); lazy load heavy admin screens.
-- State management: React Query for server cache; local state for UI; optional Redux for shared app state.
-- Routing: authenticated/unauthenticated guards; 404/500 fallbacks; tenant-aware routes.
+## Application Structure
 
-Abbreviations: TTI (Time to Interactive), CLS (Cumulative Layout Shift), RUM (Real User Monitoring).
+We recommend an app shell architecture with feature modules for each domain: Catalog, Cart, Checkout, Orders, and Admin. Load code per route and per role so a buyer never downloads code for admin features. For state management, use React Query to cache server state, local state for UI interactions, and Redux only if you truly need shared state across many parts of the app. Use authenticated/unauthenticated route guards and show proper 404 and 500 pages. Keep routes tenant-aware.
 
-## API access
-- Generated clients from OpenAPI; centralized HTTP client with retry/backoff and request ID propagation.
-- Auth: bearer tokens; silent refresh; CSRF protection if cookies used.
-- Error handling: normalize errors to RFC 7807 shape.
+## Talking to the Backend
 
-## Performance budgets (examples)
-- Bundle: ≤ 200KB gzipped per primary route.
-- P95 TTI: ≤ 2.5s on mid-tier devices; CLS within Core Web Vitals.
-- Images: lazy load; compress; use CDN.
+Generate TypeScript clients from your OpenAPI specs so you get type safety. Use a centralized HTTP client that handles retries and backoff automatically. Include request IDs in headers for tracing. Include bearer tokens in the Authorization header and refresh them silently when they expire. Implement CSRF protection if you're using cookies. Normalize error responses to the RFC 7807 JSON problem format so error handling is consistent throughout the app.
 
-## Accessibility and UX
-- WCAG 2.1 AA; keyboard navigation; focus management.
-- Error states: actionable messages; retry affordances; optimistic UI for cart.
+## Performance Budgets
+
+Set a target of 200 KB gzipped per primary route. Aim for Time to Interactive within 2.5 seconds on a mid-tier mobile device. Keep Cumulative Layout Shift within Core Web Vitals thresholds. Lazy load images, compress them, and serve them through a CDN.
+
+## Accessibility and User Experience
+
+Meet WCAG 2.1 AA standards. Make sure the app is fully navigable with the keyboard, and manage focus properly. Show error messages that explain what went wrong and how to fix it. Use optimistic updates in the cart so it feels snappy.
 
 ## Observability
-- Frontend logging with redaction; RUM metrics for latency and errors.
-- Trace context propagation via headers when calling APIs.
+
+Log from the frontend, but use redaction to remove sensitive data. Use Real User Monitoring to track actual latency and errors in production. Propagate trace context via headers when calling APIs so you can correlate frontend and backend logs.
 
 ## Diagrams
 - Component/layout (Mermaid):

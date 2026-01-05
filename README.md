@@ -1,22 +1,16 @@
 # Architecture Document Set
 
-This folder contains architecture-focused templates with built-in guidance, examples, and project-specific override sections. A hypothetical project ([ProjectName]: multi-tenant commerce) is used for examples; replace with your specifics. Diagram standards: C4 (Context/Container/Component/Deployment) plus sequence diagrams for integrations. IaC: Terraform primary; Bicep for Azure-only footprints. Source control: Conventional Commits enforced via commitlint/githooks.
+This folder contains a complete set of architecture templates and guidance for building modern, cloud-native systems. We use a hypothetical multi-tenant commerce platform as our example throughout, but you should adapt everything here to match your specific project.
 
-Abbreviations: SLO (Service Level Objective), RTO/RPO (Recovery Time/Point Objective), IaC (Infrastructure as Code), CI/CD (Continuous Integration/Delivery).
+We follow the C4 model for diagrams (Context, Container, Component, and Deployment views) along with sequence diagrams to show key integration flows. For infrastructure, Terraform is our primary choice, with Bicep available for Azure-specific deployments. We enforce Conventional Commits across the repository using commitlint and git hooks.
 
-## How to use
-- Start with Architecture-Overview and Integration-Views to frame the system and interfaces.
-- Fill Security, Deployment, Data, and App-layer docs in parallel as decisions form.
-- Use Project-Specific Overrides sections to record deviations from defaults.
-- Keep Glossary updated and reference it across docs.
-- Link diagrams (e.g., PlantUML, Mermaid) or image exports alongside each markdown.
+## How to get started
 
-## Standerd Service Level Objectives
-- Availability: 99.9% monthly.
-- Latency: p95 ≤ 300 ms and p99 ≤ 800 ms for key read/write APIs; auth p95 ≤ 150 ms.
-- Throughput: targets hold up to 500–1,000 RPS; beyond that, degrade gracefully.
-- Error budget: 0.1% monthly.
-- RTO: 30–60 minutes; RPO: 15 minutes.
+Begin with the Architecture-Overview and Integration-Views documents to understand the system boundaries and how different components talk to each other. As you make decisions about security, deployment, databases, and the application layer, you can fill out the corresponding sections in parallel. Use the Project-Specific Overrides sections to document any deviations from these defaults. Keep the Glossary up to date as terminology evolves, and include diagrams and image exports alongside the markdown files.
+
+## Standard Service Level Objectives
+
+We target 99.9% availability on a monthly basis. Latency for core read and write operations should stay within p95 ≤ 300ms and p99 ≤ 800ms, with authentication calls even faster at p95 ≤ 150ms. The system should handle 500–1,000 requests per second before gracefully degrading. With an error budget of 0.1% monthly, we aim to recover from incidents within 30–60 minutes (RTO) and lose no more than 15 minutes of data (RPO).
 
 ## Navigation
 - Architecture: [Architecture-Overview](Architecture/Architecture-Overview.md), [Integration-Views](Architecture/Integration-Views.md)
