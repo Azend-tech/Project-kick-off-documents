@@ -8,26 +8,18 @@ Draw a C4 Deployment diagram for each environment. Show the gateway/ingress, app
 
 Example (Mermaid):
 ```mermaid
-C4Deployment
-    Deployment_Node(cdn, "CDN / Edge", "Cloud CDN") {
-    }
+C4Container
+    System_Boundary(sys, "Product Platform") {
 
-    Deployment_Node(lb, "Gateway / Ingress", "NGINX / App Gateway") {
-    }
-
-    Deployment_Node(app, "App Nodes", "AKS / ECS") {
-        Container(api, "API Pods", ".NET", "Backend REST APIs")
         Container(front, "Frontend", "React", "Static web application")
-    }
+        Container(api, "Backend API", ".NET", "REST APIs")
 
-    Deployment_Node(data, "Data Layer", "Managed Services") {
         ContainerDb(db, "PostgreSQL", "Postgres", "Primary + Read Replica")
         ContainerDb(cache, "Redis", "Redis", "Distributed cache")
-        Container(queue, "Event Bus", "Kafka / Service Bus", "Asynchronous messaging")
+        Container(queue, "Event Bus", "Kafka / Service Bus", "Async messaging")
     }
 
-    Rel(cdn, lb, "HTTPS")
-    Rel(lb, app, "HTTPS")
+    Rel(front, api, "HTTPS")
     Rel(api, db, "SQL over TLS")
     Rel(api, cache, "TLS")
     Rel(api, queue, "TLS")
