@@ -11,24 +11,27 @@ Abbreviations: CDN (Content Delivery Network), AZ (Availability Zone), NAT (Netw
 
 Example (Mermaid):
 ```mermaid
-C4Deployment
-		title [ProjectName] Prod Deployment
-		Deployment_Node(cdn, "CDN/Edge")
-		Deployment_Node(lb, "Gateway/Ingress")
-		Deployment_Node(app, "App Nodes", "AKS/ECS") {
-			Container(api, "API Pods", "Node/.NET")
-			Container(front, "Frontend", "React static")
-		}
-		Deployment_Node(data, "Data Layer") {
-			ContainerDb(db, "Postgres", "Primary + Replica")
-			ContainerDb(cache, "Redis", "Cache")
-			Container(queue, "Kafka/Service Bus", "Events")
-		}
-		Rel(cdn, lb, "HTTPS")
-		Rel(lb, app, "HTTPS")
-		Rel(api, db, "SQL/TLS")
-		Rel(api, cache, "TLS")
-		Rel(api, queue, "TLS")
+C4Deployment {
+	title [ProjectName] Prod Deployment
+	Deployment_Node(cdn, "CDN/Edge") {
+	}
+	Deployment_Node(lb, "Gateway/Ingress") {
+	}
+	Deployment_Node(app, "App Nodes", "AKS/ECS") {
+		Container(api, "API Pods", "Node/.NET")
+		Container(front, "Frontend", "React static")
+	}
+	Deployment_Node(data, "Data Layer") {
+		ContainerDb(db, "Postgres", "Primary + Replica")
+		ContainerDb(cache, "Redis", "Cache")
+		Container(queue, "Kafka/Service Bus", "Events")
+	}
+	Rel(cdn, lb, "HTTPS")
+	Rel(lb, app, "HTTPS")
+	Rel(api, db, "SQL/TLS")
+	Rel(api, cache, "TLS")
+	Rel(api, queue, "TLS")
+}
 ```
 
 ## Network
