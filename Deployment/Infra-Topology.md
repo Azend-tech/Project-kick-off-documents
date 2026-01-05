@@ -9,7 +9,6 @@ Draw a C4 Deployment diagram for each environment. Show the gateway/ingress, app
 Example (Mermaid):
 ```mermaid
 C4Deployment
-	title {{ProjectName}} Prod Deployment
 	Deployment_Node(cdn, "CDN/Edge")
 	Deployment_Node(lb, "Gateway/Ingress")
 	Deployment_Node(app, "App Nodes", "AKS/ECS") {
